@@ -329,8 +329,6 @@ def main():
     # plt.title("Vertical position by frame")
     # plt.show()
 
-    draw_center(first_img, first_center)
-
     # display it
     # cv2.imshow("center", first_img)
     # cv2.waitKey(0)
