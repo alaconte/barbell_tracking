@@ -2,13 +2,14 @@ import cv2
 import imutils
 import numpy as np
 import copy
+import get_color
 
 from matplotlib import pyplot as plt
 
 
-def color_mask(img):
-    lower_bound = np.array([0, 140, 0])  # [0, 180, 0]
-    upper_bound = np.array([130, 255, 100])  # [170, 255, 150]
+def color_mask(img, lower_bound, upper_bound):
+    # lower_bound = np.array([0, 140, 0])  # [0, 180, 0]
+    # upper_bound = np.array([130, 255, 100])  # [170, 255, 150]
 
     rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     return cv2.inRange(rgb, lower_bound, upper_bound)
@@ -192,7 +193,7 @@ def main():
 
     positions = []
 
-    video_name = "testVideo4.mp4"
+    video_name = "testVideo5.mp4"
 
     save_rep_videos = True
     full_length_vid = True
@@ -211,20 +212,27 @@ def main():
             else:
                 print("Finished processing video")
                 break
-        thresh = color_mask(img)
-        # cv2.imshow("thresh", thresh)
-        # cv2.waitKey(0)
-        # input()
-        center = get_location(thresh, frame_num)
-        frame_num += 1
-        positions.append((center[0], center[1]))
 
         # record data for first frame
         if first_time:
             print("Processing video")
             first_time = False
             first_img = img
-            first_center = center
+
+            # get color to find
+            pick_color = get_color.Pick_color()
+            pick_color.user_choose_color(first_img)
+            upper, lower = pick_color.set_thresholds()
+            upper = np.array(upper)
+            lower = np.array(lower)
+
+        thresh = color_mask(img, upper, lower)
+        # cv2.imshow("thresh", thresh)
+        # cv2.waitKey(0)
+        # input()
+        center = get_location(thresh, frame_num)
+        frame_num += 1
+        positions.append((center[0], center[1]))
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
