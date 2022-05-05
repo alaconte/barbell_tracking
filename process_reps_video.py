@@ -3,6 +3,7 @@ import imutils
 import numpy as np
 import copy
 import get_color
+import sys
 
 from matplotlib import pyplot as plt
 
@@ -193,7 +194,10 @@ def main():
 
     positions = []
 
-    video_name = "testVideo5.mp4"
+    video_name = "testVideo3.mp4"
+
+    if len(sys.argv) > 1:
+        video_name = sys.argv[1]
 
     save_rep_videos = True
     full_length_vid = True
@@ -262,7 +266,7 @@ def main():
         # open video file for full length vid if necessary on first rep
         if idx == 0 and full_length_vid:
             full_vid = cv2.VideoWriter(video_name[0:len(video_name) - 4] + "_full_path.mp4",
-                                  cv2.VideoWriter_fourcc(*'h264'), 30, (width, height))
+                                       cv2.VideoWriter_fourcc(*'h264'), 30, (width, height))
 
         frame = copy.deepcopy(start_frame)
         for i in range(len(x_pos) - 1):
@@ -288,7 +292,7 @@ def main():
             rep_vid = cv2.VideoWriter(video_name[0:len(video_name) - 4] + "_rep_" + str(idx + 1) + "_path.mp4",
                                       cv2.VideoWriter_fourcc(*'h264'), 30, (width, height))
             vid_frame = cv2.putText(start_frame, "Rep " + str(idx + 1) + " took " + str(time) + " seconds",
-                            (x_text, y_text), font, text_size, color=(0, 0, 0), thickness=2)
+                                    (x_text, y_text), font, text_size, color=(0, 0, 0), thickness=2)
             rep_vid.write(vid_frame)
             if full_length_vid:
                 full_vid.write(vid_frame)
