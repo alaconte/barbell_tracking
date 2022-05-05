@@ -37,91 +37,26 @@ def generate_data():
     return train, test
 
 def base_cnn_activation(activation):
-  """
-  TO-DO: Copy the code from the base_cnn() function above and paste it here.
-  This starter code sets the activation function to 'relu' by default. Modify
-  the code so that it can work with an user-supplied activation functions instead
-  of the default 'relu' activation. Do not change the 'softmax' activation. Refer
-  to the simulation code below to understand the possible values that the input
-  'activation' may take.
-  """
-  """
-  Define a convolutional neural network using the Sequential model. This is the 
-  basic CNN that you will need to reuse for the remaining parts of the assignment.
-  It would be good to familiarize yourself with the workings of this basic CNN.
-  """
   model = Sequential()
-  '''
-  Add 2D convolution layers the perform spatial convolution over images. This 
-  layer creates a convolution kernel that is convolved with the layer input to 
-  produce a tensor of outputs. When using this layer as the first layer in a 
-  model, provide the keyword argument 'input_shape' (tuple of integers). Besides,
-  the Conv2D function takes as input
-  - filters: Integer, the dimensionality of the output space (i.e. the number of
-   output filters in the convolution). We set it to 32.
-  - kernel_size: An integer or tuple/list of 2 integers, specifying the height
-   and width of the 2D convolution window. Can be a single integer to specify 
-   the same value for all spatial dimensions. We set it to (3, 3).
-
-  Here, we create a stack of (CONV2D, Activation, CONV2D, Activation) layers with 
-  the ReLu activation function 
-  '''
   model.add(Conv2D(32, (3, 3), padding='same',input_shape=x_train.shape[1:]))
   model.add(Activation(activation))
   model.add(Conv2D(32, (3, 3), padding='same'))
   model.add(Activation(activation))
-  '''
-  Perform MaxPooling operation for 2D spatial data. This downsamples the input
-  along its spatial dimensions (height and width) by taking the maximum value 
-  over an input window of size 2X2 for each channel of the input.
-  '''
   model.add(MaxPooling2D(pool_size=(2, 2)))
-  '''
-  Add a Dropout layer that  randomly sets input units to 0 with a frequency of
-  'rate' at each step during training time, which helps prevent overfitting. 
-  Inputs not set to 0 are scaled up by 1/(1 - rate) such that the sum over all
-  inputs is unchanged. We set the rate to 0.25 for Dropout.
-  '''
   model.add(Dropout(0.25))
-  '''
-  Create another stack of (CONV2D, Activation, CONV2D, Activation) layers with 
-  the ReLu activation function. Set the 'filters' to 64.
-  '''
   model.add(Conv2D(64, (3, 3), padding='same'))
   model.add(Activation(activation))
   model.add(Conv2D(64, (3, 3), padding='same'))
   model.add(Activation(activation))
-  '''
-  Perfrom MaxPooling and Dropout similar to the one defined earlier.
-  '''
   model.add(MaxPooling2D(pool_size=(2, 2)))
   model.add(Dropout(0.25))
-  '''
-  The image is still in 3D. It needs be unrolled from 3D to 1D using the Flatten
-  layer. Then add a Dense layers on top of it followed by ReLu activation and 
-  dropout of 0.5. This helps to create a fully-connected layer.
-  '''
   model.add(Flatten())
   model.add(Dense(512))
   model.add(Activation(activation))
   model.add(Dropout(0.5))
-  '''
-  Create the output layer using the Dense layer with 'softmax' activation. The 
-  number of predicted output needs to be equal to 'num_classes'.
-  '''
   model.add(Dense(units=2))
   model.add(Activation('softmax'))
-  '''
-  Set the optimizer for doing mini-batch gradient descent. Here, we make use of 
-  the RMSprop optimizer that comes with Keras. We supply some default values for
-  the parameters learning_rate and decay. Do not modify them.
-  '''
   opt = keras.optimizers.RMSprop(learning_rate=0.0001, decay=1e-6)
-  '''
-  Compile the model for training. Since this is a multi-class classification 
-  problem, we use the 'categorical_crossentropy' loss function and 'accuracy' as
-  the desired performance metric.
-  '''
   model.compile(loss='mean_absolute_error',
                 optimizer=opt,
                 metrics=['accuracy'])
